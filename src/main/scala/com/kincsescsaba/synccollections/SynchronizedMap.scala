@@ -1,7 +1,9 @@
+package com.kincsescsaba.synccollections
+
 import java.util.concurrent.ConcurrentHashMap
 
-import scala.collection.{Iterator, TraversableOnce}
 import scala.collection.JavaConverters._
+import scala.collection.{Iterator, TraversableOnce}
 import scala.reflect.ClassTag
 
 class SynchronizedMap[A, B] {

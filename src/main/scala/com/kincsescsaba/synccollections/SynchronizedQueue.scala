@@ -1,8 +1,10 @@
+package com.kincsescsaba.synccollections
+
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import scala.collection.mutable.{ArrayBuffer, Seq}
 import scala.collection.JavaConverters._
 import scala.collection.TraversableOnce
+import scala.collection.mutable.{ArrayBuffer, Seq}
 import scala.reflect.ClassTag
 
 class SynchronizedQueue[A : ClassTag] {
