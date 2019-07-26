@@ -2,8 +2,8 @@ package com.kincsescsaba.synccollections
 
 import java.util.concurrent.ConcurrentHashMap
 
-import scala.collection.JavaConverters._
-import scala.collection.{Iterator, TraversableOnce}
+import scala.jdk.CollectionConverters._
+import scala.collection.Iterator
 import scala.reflect.ClassTag
 
 class SynchronizedMap[A, B] {
@@ -19,8 +19,8 @@ class SynchronizedMap[A, B] {
     underlying.remove(key)
     this
   }
-  def ++=(xs: TraversableOnce[(A, B)]): this.type = {
-    for (x <- xs) { underlying.put(x._1, x._2) }
+  def ++=(xs: IterableOnce[(A, B)]): this.type = {
+    for (x <- xs.iterator) { underlying.put(x._1, x._2) }
     this
   }
 
@@ -57,7 +57,7 @@ class SynchronizedMap[A, B] {
     this
   }
   def values: scala.collection.Iterable[B] = {
-    valuesIterator.toIterable
+    underlying.values().asScala
   }
   def valuesIterator: Iterator[B] = {
     underlying.values().iterator().asScala
@@ -74,7 +74,7 @@ class SynchronizedMap[A, B] {
     underlying.keySet().asScala.toSet
   }
   def keys: scala.collection.Iterable[A] = {
-    underlying.keys().asScala.toIterable
+    underlying.keys().asScala.toList
   }
   def keysIterator: Iterator[A] = {
     keys.iterator

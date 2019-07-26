@@ -2,8 +2,7 @@ package com.kincsescsaba.synccollections
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import scala.collection.JavaConverters._
-import scala.collection.TraversableOnce
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable.{ArrayBuffer, Seq}
 import scala.reflect.ClassTag
 
@@ -33,8 +32,8 @@ class SynchronizedQueue[A : ClassTag] {
     *
     *  @param  xs        a traversable object
     */
-  def ++=(xs: TraversableOnce[A]): this.type = {
-    for (x <- xs) { underlying.add(x) }
+  def ++=(xs: IterableOnce[A]): this.type = {
+    for (x <- xs.iterator) { underlying.add(x) }
     this
   }
 
@@ -69,7 +68,7 @@ class SynchronizedQueue[A : ClassTag] {
     if (isEmpty)
       None
     else {
-      underlying.iterator().asScala.toStream.find(p)
+      underlying.iterator().asScala.to(LazyList).find(p)
     }
 
   /** Returns all elements in the queue which satisfy the
@@ -112,7 +111,7 @@ class SynchronizedQueue[A : ClassTag] {
   def tail: SynchronizedQueue[A] = {
     val tl = new SynchronizedQueue[A]
     if ( ! isEmpty ) {
-      tl.enqueue( underlying.iterator().asScala.drop(1).toArray :_* )
+      tl.enqueue( underlying.iterator().asScala.drop(1).toIndexedSeq :_* )
     } else {
       throw new Exception("Tail of an empty queue")
     }
@@ -149,7 +148,7 @@ class SynchronizedQueue[A : ClassTag] {
 
   override def clone(): SynchronizedQueue[A] = {
     val cl = new SynchronizedQueue[A]
-    cl.enqueue( underlying.iterator().asScala.toArray :_* )
+    cl.enqueue( underlying.iterator().asScala.toIndexedSeq :_* )
     cl
   }
 }
