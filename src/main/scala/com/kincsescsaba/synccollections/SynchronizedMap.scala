@@ -92,16 +92,16 @@ class SynchronizedMap[A : ClassTag, B : ClassTag] private
 
   def map[T : ClassTag](f: ((A, B)) => T): SynchronizedMap[A, T] = {
     val mapped = new ConcurrentHashMap[A, T]()
-    def doMap(kv: (A, B)) {
+    def doMap(kv: (A, B)): Unit = {
       mapped.put(kv._1, f(kv))
     }
     foreach { doMap }
     new SynchronizedMap[A, T](mapped)
   }
 
-  def flatMap[K2, V2](f: ((A, B)) => IterableOnce[(K2, V2)]): SynchronizedMap[K2, V2] = {
+  def flatMap[K2 : ClassTag, V2 : ClassTag](f: ((A, B)) => IterableOnce[(K2, V2)]): SynchronizedMap[K2, V2] = {
     val mapped = new ConcurrentHashMap[K2, V2]()
-    def doMap(kv: (A, B)) {
+    def doMap(kv: (A, B)): Unit = {
       f(kv).iterator foreach { r =>
           mapped.put(r._1, r._2)
       }
@@ -145,7 +145,7 @@ class SynchronizedMap[A : ClassTag, B : ClassTag] private
   override def toString() = underlying.toString
 
   override def clone(): SynchronizedMap[A, B] = {
-    SynchronizedMap(iterator.toArray: _*)
+    SynchronizedMap(iterator.toIndexedSeq: _*)
   }
 
   /*def withFilter(p: (A, B) => Boolean): FilterMonadic[(A, B), SynchronizedMap[A, B]] = new WithFilter(p)
