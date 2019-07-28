@@ -17,6 +17,8 @@ class SynchronizedQueue[A : ClassTag] {
 
   def nonEmpty: Boolean = ! isEmpty
 
+  def iterator: Iterator[A] = underlying.iterator().asScala
+
   /** Inserts a single element at the end of the queue.
     *
     *  @param  elem        the element to insert
@@ -147,9 +149,7 @@ class SynchronizedQueue[A : ClassTag] {
   override def toString() = underlying.toString
 
   override def clone(): SynchronizedQueue[A] = {
-    val cl = new SynchronizedQueue[A]
-    cl.enqueue( underlying.iterator().asScala.toIndexedSeq :_* )
-    cl
+    SynchronizedQueue(iterator.toArray :_*)
   }
 }
 
@@ -162,7 +162,6 @@ object SynchronizedQueue {
     else {
       val sq = empty[A]
       sq ++= elems
-      sq
     }
   }
 }
